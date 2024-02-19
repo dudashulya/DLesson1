@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_job/themes/colors.dart';
 
 ThemeData dark = ThemeData(
+  scaffoldBackgroundColor: deepColor,
   appBarTheme: const AppBarTheme(
+
     centerTitle: true,
     backgroundColor: lightColor,
     titleTextStyle: TextStyle(color: Colors.white,
