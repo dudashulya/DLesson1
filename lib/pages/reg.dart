@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:flutter_job/database/firebase/user_service.dart';
+import 'package:flutter_job/database/firebaseStore/profile_collection.dart';
+import 'package:toast/toast.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -10,8 +12,19 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  TextEditingController surnameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController patronymicController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  AuthService authService = AuthService();
+  ProfileCollection profileCollection = ProfileCollection();
+  bool visibility = false;
   @override
   Widget build(BuildContext context) {
+
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text ('Регистрация',),
@@ -34,6 +47,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: TextField(
+                  controller: surnameController ,
                   style:  const TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   decoration: InputDecoration(
@@ -64,6 +78,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                  SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: TextField(
+                  controller: nameController,
                   style:  const TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   decoration: InputDecoration(
@@ -94,6 +109,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                  SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: TextField(
+                  controller: patronymicController,
                   style:  const TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   decoration: InputDecoration(
@@ -124,6 +140,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: TextField(
+                  controller: phoneController,
                   style:  const TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   decoration: InputDecoration(
@@ -154,6 +171,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                  SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: TextField(
+                  controller: emailController,
                   style:  const TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   decoration: InputDecoration(
@@ -184,6 +202,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                  SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: TextField(
+                  controller: passController,
                   style:  const TextStyle(color: Colors.white),
                   cursorColor: Colors.white,
                   decoration: InputDecoration(
@@ -211,7 +230,34 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 height: MediaQuery.of(context).size.height * 0.06,
                 width: MediaQuery.of(context).size.width * 0.5,
                 child: OutlinedButton(
-                  onPressed: () => Navigator.popAndPushNamed(context, '/'),
+                  onPressed: () async {
+                    if (surnameController.text.isEmpty || 
+                        nameController.text.isEmpty || 
+                        patronymicController.text.isEmpty || 
+                        phoneController.text.isEmpty || 
+                        emailController.text.isEmpty || 
+                        passController.text.isEmpty) {
+                          Toast.show("Заполните все поля");
+                    } else {
+                      var user = await authService.signUp(emailController.text, passController.text);
+                          if (user == null){
+                            Toast.show("Проверьте правильнось данных");
+                          } else{
+                            await profileCollection.addProfile(
+                            user.id!, 
+                            surnameController.text, 
+                            nameController.text, 
+                            patronymicController.text,
+                            phoneController.text, 
+                            emailController.text, 
+                            passController.text,
+                            ''
+                            );
+                          Toast.show('Вы успешно зарегистрировались!');
+                          Navigator.popAndPushNamed(context, '/');
+                      } 
+                    }
+                  },
                   child: const Text('Зарегистрироваться'),
                   
                 ),

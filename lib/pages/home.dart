@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_job/database/firebase/user_service.dart';
 import 'package:flutter_job/pages/bottom/profile.dart';
 import 'package:flutter_job/pages/bottom/responses.dart';
 import 'package:flutter_job/pages/bottom/vacancy.dart';
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  AuthService authService = AuthService();
   String? title = 'Вакансии';
   int index = 0;
   bool serch = false;
@@ -50,6 +52,12 @@ class _HomePageState extends State<HomePage> {
   );
      AppBar appBar = AppBar(
     title: Text(title!),
+    leading: IconButton(icon: const Icon(Icons.exit_to_app, color: Colors.white60,),
+    onPressed: () async {
+      await authService.logOut();
+      Navigator.popAndPushNamed(context, '/');
+    },
+    ),
     actions: [
       IconButton(onPressed: () {
         setState(() {
@@ -59,6 +67,13 @@ class _HomePageState extends State<HomePage> {
     ],
   );
     return  Scaffold(
+      floatingActionButton: index == 2 
+      ? FloatingActionButton(
+        onPressed: () {}, 
+        child: const Icon(
+          Icons.add, color: Colors.white,),
+          )
+          : null,
       appBar: serch? appBarSerch :appBar ,
       body: pages.elementAt(index),
       bottomNavigationBar: BottomNavigationBar(
